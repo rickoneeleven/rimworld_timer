@@ -1,0 +1,17 @@
+# Build outputs
+bin/
+obj/
+/.idea/
+/.vs/
+*.user
+*.suo
+*.DotSettings*
+
+# Mod outputs
+Assemblies/*.pdb
+Assemblies/*.mdb
+
+# OS
+.DS_Store
+Thumbs.db
+

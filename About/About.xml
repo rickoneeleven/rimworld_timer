@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ModMetaData>
+  <name>RimWorld Timer</name>
+  <author>rickoneeleven</author>
+  <packageId>rickoneeleven.rimworldtimer</packageId>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+  <description>
+    A simple real-time productivity timer. Shows a 10-minute countdown in the top-right, pauses with the game, and on completion plays a beep and flashes until you click Stop (which pauses the game and resets the timer). Unpausing starts the next cycle.
+  </description>
+  <modVersion>0.1.0</modVersion>
+  <modDependencies>
+    <li>
+      <packageId>brrainz.harmony</packageId>
+      <displayName>Harmony</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=2009463077</steamWorkshopUrl>
+      <downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
+    </li>
+  </modDependencies>
+</ModMetaData>
