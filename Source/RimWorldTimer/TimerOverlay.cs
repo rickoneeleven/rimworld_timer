@@ -117,7 +117,23 @@ namespace RimWorldTimer
             float dt = Mathf.Max(0f, now - gc.LastRealtime);
             gc.LastRealtime = now;
 
-            bool paused = Find.TickManager?.CurTimeSpeed == TimeSpeed.Paused;
+            bool paused = true;
+            var tickManager = Find.TickManager;
+            if (tickManager != null)
+            {
+                try
+                {
+                    // Covers normal pause and force-pause windows (e.g., trade, mod settings)
+                    paused = tickManager.Paused;
+                }
+                catch
+                {
+                    // Fallback for older APIs
+                    paused = tickManager.CurTimeSpeed == TimeSpeed.Paused;
+                }
+            }
+            // Extra guard: if Unity is effectively paused, treat as paused
+            if (Time.timeScale <= 0f) paused = true;
             if (!gc.AlarmActive && !paused)
             {
                 gc.RemainingSeconds -= dt;

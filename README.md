@@ -1,9 +1,11 @@
+DATETIME of last agent review: 04 October 2025 19:45
+
 # RimWorld Timer (RimWorld 1.6)
 
-A lightweight productivity timer for RimWorld. Shows a countdown in the top‑right, pauses with the game, auto‑pauses on alarm, flashes and beeps until you click Reset. Unpausing (or Reset while paused) starts the next cycle.
+A lightweight productivity timer for RimWorld. Shows a countdown in the top-right, pauses with the game (including forced-pause windows like trade and mod settings), auto-pauses on alarm, flashes and beeps until you click Reset. Unpausing starts the next cycle; if the alarm is active, pressing Reset also resumes at normal speed.
 
 ## Features
-- Real‑time countdown that halts when the game is paused
+- Real-time countdown that halts when the game is paused (including forced-pause windows)
 - Auto‑pause the game when time reaches 0
 - Flashing panel + vanilla beep on alarm
 - Reset button to stop flashing, reset timer, and resume
@@ -77,8 +79,8 @@ Then in RimWorld:
   - Panel flashes
   - Game auto‑pauses
 - Clicking Reset:
-  - Stops flashing, resets the timer to the configured seconds
-  - Unpauses to normal speed so the next cycle starts immediately
+  - Stops flashing and resets the timer to the configured seconds
+  - If the alarm is active, also sets time speed to Normal so the next cycle starts immediately
 
 ## Troubleshooting
 - If the overlay doesn’t appear:
@@ -100,6 +102,9 @@ Then in RimWorld:
 - Supported RimWorld version: 1.6 (About.xml)
 - Harmony dependency (Steam Workshop 2009463077) declared in About.xml with workshop and download URLs
 - Sound uses vanilla click; you can later add a custom `SoundDef` if desired
+
+## Agent Notes
+- Always build after changes and ask the user to test.
 
 ## Future Ideas
 - Snooze button (e.g., +2 minutes)
