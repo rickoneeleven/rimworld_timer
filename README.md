@@ -11,6 +11,11 @@ A lightweight productivity timer for RimWorld. Shows a countdown in the top‑ri
 - Panel width/height configurable
 - Interval in seconds (easy 1–5 second testing)
 
+## Screenshots
+![Timer overlay example 1](https://notes.pinescore.com/assets/note_68494425571805.86159046/image.png)
+
+![Timer overlay example 2](https://notes.pinescore.com/assets/note_68494425571805.86159046/image(1).png)
+
 ## Known‑Good Paths (this Mac)
 - Game app: `/Users/rick111/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app`
 - Managed: `/Users/rick111/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Contents/Resources/Data/Managed`
