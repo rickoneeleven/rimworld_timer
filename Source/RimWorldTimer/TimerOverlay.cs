@@ -1,5 +1,6 @@
 using System;
 using RimWorld;
+using HarmonyLib;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -63,10 +64,11 @@ namespace RimWorldTimer
         }
     }
 
-    public class TimerWindow : Window
+    public partial class TimerWindow : Window
     {
         public static TimerWindow? Instance;
         private bool _loggedDrawOnce;
+        private static Texture2D? _texCog;
 
         public TimerWindow()
         {
@@ -83,6 +85,7 @@ namespace RimWorldTimer
             closeOnAccept = false;
             closeOnCancel = false;
             Instance = this;
+            TryLoadTextures();
         }
 
         public override void PostClose()
@@ -187,14 +190,30 @@ namespace RimWorldTimer
             // Simple horizontal layout: time left, button right; keep safe padding
             float buttonWidth = Mathf.Min(72f, inner.width * 0.35f);
             float buttonHeight = Mathf.Clamp(inner.height - 12f, 22f, 28f);
-            var btnRect = new Rect(inner.xMax - buttonWidth, inner.y + (inner.height - buttonHeight) / 2f, buttonWidth, buttonHeight);
-            var timeRect = new Rect(inner.x, inner.y, inner.width - buttonWidth - 8f, inner.height);
+            float cogSize = buttonHeight; // square
+            float gap = 6f;
+            var resetRect = new Rect(inner.xMax - buttonWidth, inner.y + (inner.height - buttonHeight) / 2f, buttonWidth, buttonHeight);
+            var cogRect = new Rect(resetRect.x - gap - cogSize, inner.y + (inner.height - cogSize) / 2f, cogSize, cogSize);
+            var timeRect = new Rect(inner.x, inner.y, inner.width - buttonWidth - cogSize - 2 * gap, inner.height);
 
             DrawLabelOutlined(timeRect, FormatTime(gc.RemainingSeconds), Color.white);
 
+            // Settings button (icon if available, else small text)
+            bool clickedSettings;
+            if (_texCog != null)
+            {
+                clickedSettings = Widgets.ButtonImage(cogRect, _texCog, true);
+            }
+            else
+            {
+                clickedSettings = Widgets.ButtonText(cogRect, "Cfg");
+            }
+            if (clickedSettings) OpenModSettings();
+            TooltipHandler.TipRegion(cogRect, "Settings");
+
             if (gc.AlarmActive)
             {
-                if (Widgets.ButtonText(btnRect, "Reset"))
+                if (Widgets.ButtonText(resetRect, "Reset"))
                 {
                     gc.ResetTimerFull();
                     try { Find.TickManager.CurTimeSpeed = TimeSpeed.Normal; } catch { }
@@ -202,7 +221,7 @@ namespace RimWorldTimer
             }
             else
             {
-                if (Widgets.ButtonText(btnRect, "Reset"))
+                if (Widgets.ButtonText(resetRect, "Reset"))
                 {
                     gc.ResetTimerFull();
                 }
@@ -240,6 +259,80 @@ namespace RimWorldTimer
             GUI.color = prevColor;
             Text.Font = prevFont;
             Text.Anchor = prevAnchor;
+        }
+    }
+
+    internal static class SettingsLauncher
+    {
+        public static void OpenModSettings()
+        {
+            try
+            {
+                var mod = LoadedModManager.GetMod<TimerMod>();
+                // Try to find Dialog_ModSettings via Harmony AccessTools for compatibility
+                var type = AccessTools.TypeByName("RimWorld.Dialog_ModSettings")
+                           ?? AccessTools.TypeByName("Verse.Dialog_ModSettings")
+                           ?? AccessTools.TypeByName("Dialog_ModSettings");
+                if (type != null)
+                {
+                    object? dlg = null;
+                    // Prefer ctor(Mod)
+                    var withMod = AccessTools.Constructor(type, new[] { typeof(Mod) });
+                    if (withMod != null)
+                    {
+                        dlg = Activator.CreateInstance(type, mod);
+                    }
+                    else
+                    {
+                        // Fallback to parameterless dialog
+                        var noArgs = AccessTools.Constructor(type, Type.EmptyTypes);
+                        if (noArgs != null)
+                        {
+                            dlg = Activator.CreateInstance(type);
+                        }
+                    }
+                    if (dlg is Window w)
+                    {
+                        Find.WindowStack.Add(w);
+                        return;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Warning("[RimWorldTimer] Failed to open settings directly: " + e.Message);
+            }
+            // Final fallback: open the standard settings list if available via Defs
+            try
+            {
+                var pageType = AccessTools.TypeByName("RimWorld.Dialog_ModSettings")
+                                ?? AccessTools.TypeByName("Verse.Dialog_ModSettings");
+                if (pageType != null)
+                {
+                    var dlg = Activator.CreateInstance(pageType);
+                    if (dlg is Window w) { Find.WindowStack.Add(w); }
+                }
+            }
+            catch { }
+        }
+    }
+
+    // Local helpers
+    public partial class TimerWindow
+    {
+        private static void TryLoadTextures()
+        {
+            if (_texCog != null) return;
+            // Try a few likely built-in paths; fallback to default bad texture
+            _texCog = ContentFinder<Texture2D>.Get("UI/Buttons/Options", false)
+                      ?? ContentFinder<Texture2D>.Get("UI/Buttons/Settings", false)
+                      ?? ContentFinder<Texture2D>.Get("UI/Buttons/Config", false)
+                      ?? ContentFinder<Texture2D>.Get("UI/Widgets/Gear", false);
+        }
+
+        private static void OpenModSettings()
+        {
+            SettingsLauncher.OpenModSettings();
         }
     }
 }

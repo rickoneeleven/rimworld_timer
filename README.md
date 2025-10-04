@@ -9,6 +9,7 @@ A lightweight productivity timer for RimWorld. Shows a countdown in the top-righ
 - Auto‑pause the game when time reaches 0
 - Flashing panel + vanilla beep on alarm
 - Reset button to stop flashing, reset timer, and resume
+- Cog button between time and Reset to open this mod's settings
 - Position offsets (X/Y) to avoid overlapping resource readout
 - Panel width/height configurable
 - Interval in seconds (easy 1–5 second testing)
@@ -110,3 +111,4 @@ Then in RimWorld:
 - Snooze button (e.g., +2 minutes)
 - Global hotkey to Reset
 - Optional countdown color themes
+You can also click the cog button on the overlay to open the Timer settings directly.
